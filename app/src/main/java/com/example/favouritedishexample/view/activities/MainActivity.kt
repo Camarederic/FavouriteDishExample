@@ -1,4 +1,4 @@
-package com.example.favouritedishexample
+package com.example.favouritedishexample.view.activities
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
