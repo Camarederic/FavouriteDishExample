@@ -12,4 +12,7 @@
     <string name="label_cooking">Cooking Time In Minutes</string>
     <string name="label_direction">Direction To Cook</string>
     <string name="button_add_dish">Add Dish</string>
+    <string name="title_select_image_action">Select Image Action</string>
+    <string name="label_camera">Camera</string>
+    <string name="label_gallery">Gallery</string>
 </resources>
