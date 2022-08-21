@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -144,9 +145,13 @@ class AddUpdateDishActivity : AppCompatActivity(),
                 // 9.1) Изменяем код
                 .withListener(object : PermissionListener {
                     override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                        Toast.makeText(this@AddUpdateDishActivity,
-                            "You have the Gallery permission now to select image",
-                            Toast.LENGTH_SHORT).show()
+                        // 10.2) Удаляем тоаст сообщение и создаем интент
+//                        Toast.makeText(this@AddUpdateDishActivity,
+//                            "You have the Gallery permission now to select image",
+//                            Toast.LENGTH_SHORT).show()
+                        val galleryIntent = Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        startActivityForResult(galleryIntent, GALLERY)
                     }
 
                     override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
@@ -201,6 +206,20 @@ class AddUpdateDishActivity : AppCompatActivity(),
                     R.drawable.ic_vector_edit))
                 }
             }
+            // 10.3) Добавляем проверку для галереи
+            if (requestCode == GALLERY){
+                data?.let {
+                    val selectedPhotoUri = data.data
+
+                    mBinding.imageViewDish.setImageURI(selectedPhotoUri)
+
+                    mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_vector_edit))
+                }
+            }
+            // 10.4) Добавляем
+        }else if (resultCode == Activity.RESULT_CANCELED){
+            Log.e("cancelled", "User cancelled image selection")
         }
     }
 
@@ -228,6 +247,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
     companion object {
 
         private const val CAMERA = 1
+
+        // 10.1) Создаем константу для галереи
+        private const val GALLERY = 2
     }
 }
 
