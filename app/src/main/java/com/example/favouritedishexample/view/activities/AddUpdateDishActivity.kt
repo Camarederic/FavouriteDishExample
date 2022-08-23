@@ -18,12 +18,14 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -33,6 +35,9 @@ import com.bumptech.glide.request.target.Target
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
+import com.example.favouritedishexample.databinding.DialogCustomListBinding
+import com.example.favouritedishexample.utils.Constants
+import com.example.favouritedishexample.view.adapters.CustomListItemAdapter
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -51,7 +56,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
     private lateinit var mBinding: ActivityAddUpdateDishBinding
 
     // 12.3) Создаем переменную для пути картинки
-    private var mImagePath : String = ""
+    private var mImagePath: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +73,11 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
         // 23) Добавляем клик слушателя для картинки фото с плюсиком
         mBinding.imageViewAddDish.setOnClickListener(this)
+
+        // 13.15) Добавляем клики слушателя для выбора типов еды, категории и времени приготовления
+        mBinding.editTextType.setOnClickListener(this)
+        mBinding.editTextCategory.setOnClickListener(this)
+        mBinding.editTextCookingTime.setOnClickListener(this)
     }
 
     // 24) Создаем метод для настройки тулбара для возврата назад
@@ -88,7 +98,25 @@ class AddUpdateDishActivity : AppCompatActivity(),
 //                        Toast.LENGTH_SHORT).show()
                     // 29) Вызываем метод
                     customImageSelectionDialog()
-
+                    return
+                }
+                // 13.16) Добавляем id типа, категории и времени приготовления
+                R.id.editTextType ->{
+                    customItemsListDialog(resources.getString(R.string.title_select_dish_type),
+                    Constants.dishTypes(),
+                    Constants.DISH_TYPE)
+                    return
+                }
+                R.id.editTextCategory ->{
+                    customItemsListDialog(resources.getString(R.string.title_select_dish_category),
+                    Constants.dishCategories(),
+                    Constants.DISH_CATEGORY)
+                    return
+                }
+                R.id.editTextCookingTime ->{
+                    customItemsListDialog(resources.getString(R.string.title_select_dish_cooking_time),
+                    Constants.dishCookTime(),
+                    Constants.DISH_COOKING_TIME)
                     return
                 }
             }
@@ -165,7 +193,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
 //                            "You have the Gallery permission now to select image",
 //                            Toast.LENGTH_SHORT).show()
                         val galleryIntent = Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         startActivityForResult(galleryIntent, GALLERY)
                     }
 
@@ -208,8 +236,8 @@ class AddUpdateDishActivity : AppCompatActivity(),
     // 9.5) Создаем метод
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK){
-            if (requestCode == CAMERA){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAMERA) {
                 data?.extras?.let {
                     val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
 
@@ -228,11 +256,11 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
                     // 9.7) Изменяем иконку фотоаппарата с плюсиком на карандаш
                     mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.ic_vector_edit))
+                        R.drawable.ic_vector_edit))
                 }
             }
             // 10.3) Добавляем проверку для галереи
-            if (requestCode == GALLERY){
+            if (requestCode == GALLERY) {
                 data?.let {
                     val selectedPhotoUri = data.data
 
@@ -244,7 +272,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
                         // 12.5) Добавляем
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         // 12.6) Добавляем два метода
-                        .listener(object : RequestListener<Drawable>{
+                        .listener(object : RequestListener<Drawable> {
                             override fun onLoadFailed(
                                 e: GlideException?,
                                 model: Any?,
@@ -270,17 +298,19 @@ class AddUpdateDishActivity : AppCompatActivity(),
                                     Log.i("ImagePath", mImagePath)
                                 }
                                 return false
+
+                                // 13.1) Создаем папку utils
                             }
 
                         })
                         .into(mBinding.imageViewDish)
 
                     mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.ic_vector_edit))
+                        R.drawable.ic_vector_edit))
                 }
             }
             // 10.4) Добавляем
-        }else if (resultCode == Activity.RESULT_CANCELED){
+        } else if (resultCode == Activity.RESULT_CANCELED) {
             Log.e("cancelled", "User cancelled image selection")
         }
     }
@@ -306,21 +336,37 @@ class AddUpdateDishActivity : AppCompatActivity(),
     }
 
     // 12.2) Создаем метод для сохранения изображения во внутреннюю память
-    private fun saveImageToInternalStorage(bitmap: Bitmap): String{
+    private fun saveImageToInternalStorage(bitmap: Bitmap): String {
         val wrapper = ContextWrapper(applicationContext)
 
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg" )
+        file = File(file, "${UUID.randomUUID()}.jpg")
 
         try {
-            val stream : OutputStream = FileOutputStream(file)
+            val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return file.absolutePath
+    }
+
+    // 13.13) Создаем метод для окна пользовательских элементов
+    private fun customItemsListDialog(title: String, itemList: List<String>, selection: String) {
+        val customListDialog = Dialog(this)
+        val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
+
+        customListDialog.setContentView(binding.root)
+        binding.textViewTitle.text = title
+
+        binding.recyclerViewList.layoutManager = LinearLayoutManager(this)
+
+        // 13.14) Создаем адаптер
+        val adapter = CustomListItemAdapter(this, itemList, selection)
+        binding.recyclerViewList.adapter = adapter
+        customListDialog.show()
     }
 
     // 9.4) Создаем константу для камеры

@@ -20,5 +20,6 @@
 
     <color name="blue_grey">#37474f</color>
     <color name="dark_grey">#212121</color>
+    <color name="divider_line_color">#e0e0e0</color>
 
 </resources>
