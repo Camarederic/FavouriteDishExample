@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.favouritedishexample.databinding.ItemCustomListBinding
+import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
 
 // 13.10) Создаем адаптер с тремя параметрами
 class CustomListItemAdapter(
@@ -28,6 +29,13 @@ class CustomListItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = listItems[position]
         holder.tvText.text = item
+
+        // 14.6) Создаем клик слушателя для itemView
+        holder.itemView.setOnClickListener {
+            if (activity is AddUpdateDishActivity){
+                activity.selectedListItem(item, selection)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
