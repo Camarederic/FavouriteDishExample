@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,11 +35,15 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.favouritedishexample.R
+import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
 import com.example.favouritedishexample.databinding.DialogCustomListBinding
+import com.example.favouritedishexample.model.entities.FavouriteDish
 import com.example.favouritedishexample.utils.Constants
 import com.example.favouritedishexample.view.adapters.CustomListItemAdapter
+import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
+import com.example.favouritedishexample.viewmodel.FavouriteDishViewModelFactory
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -61,6 +66,11 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
     // 14.1) Создаем переменную
     private lateinit var mCustomListDialog: Dialog
+
+    // 20.1) Создаем viewModel
+    private val mFavouriteDishViewModel: FavouriteDishViewModel by viewModels {
+        FavouriteDishViewModelFactory((application as FavouriteDishApplication).repository)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,8 +186,28 @@ class AddUpdateDishActivity : AppCompatActivity(),
                                 Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            Toast.makeText(this, "All the entries are valid", Toast.LENGTH_SHORT)
-                                .show()
+                            // 20.3) Удаляем тоаст сообщение и записываем вместо него другой код
+                            // Toast.makeText(this, "All the entries are valid", Toast.LENGTH_SHORT)
+                            // .show()
+                            val favouriteDishDetails: FavouriteDish = FavouriteDish(
+                                mImagePath,
+                                Constants.DISH_IMAGE_SOURCE_LOCAL,
+                                title,
+                                type,
+                                category,
+                                ingredients,
+                                cookingTimeInMinutes,
+                                cookingDirection,
+                                false
+                            )
+                            // 20.4) Вставляем во viewModel детали
+                            mFavouriteDishViewModel.insert(favouriteDishDetails)
+                            // 20.5) Пишем другое тоаст сообщение
+                            Toast.makeText(this@AddUpdateDishActivity,
+                            "You successfully added your favourite dish details",
+                            Toast.LENGTH_SHORT).show()
+                            Log.i("Insertion", "Success")
+                            finish()
                         }
 
                     }
