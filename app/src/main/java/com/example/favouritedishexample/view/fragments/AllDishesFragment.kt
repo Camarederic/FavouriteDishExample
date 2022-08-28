@@ -4,31 +4,32 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.FragmentAllDishesBinding
 import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
+import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModelFactory
 import com.example.favouritedishexample.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
-    private var _binding: FragmentAllDishesBinding? = null
 
-    // 20.4) Создаем viewModel
+    private lateinit var mBinding: FragmentAllDishesBinding
+
+    // 21.4) Создаем viewModel
     private val mFavouriteDishViewModel: FavouriteDishViewModel by viewModels {
         FavouriteDishViewModelFactory((requireActivity().application as FavouriteDishApplication).repository)
     }
 
-
-    private val binding get() = _binding!!
 
     // 15) Имплементируем метод onCreate
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,33 +44,57 @@ class AllDishesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        // 22.10) Удаляем этот код и пишем другой
+//        homeViewModel =
+//            ViewModelProvider(this).get(HomeViewModel::class.java)
+//
+//        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
+//        val root: View = binding.root
+//
+//        val textView: TextView = binding.textViewNoDishesAddedYet
+//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+//            textView.text = it
+//        })
+        mBinding = FragmentAllDishesBinding.inflate(inflater, container,false)
+        return mBinding.root
     }
 
-    // 20.5) Создаем метод onViewCreated
+    // 21.5) Создаем метод onViewCreated
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 20.6)
+        // 22.11) Устанавливаем расположение как сетка
+        mBinding.recyclerViewDishesList.layoutManager = GridLayoutManager(requireActivity(),2)
+        val favouriteDishAdapter = FavouriteDishAdapter(this@AllDishesFragment)
+        mBinding.recyclerViewDishesList.adapter = favouriteDishAdapter
+
+
+        // 21.6)
         mFavouriteDishViewModel.allDishesList.observe(viewLifecycleOwner){
             dishes ->
             dishes.let {
+                // 22.12) Проверяем на пустоту
+                if (it.isNotEmpty()){
+                    // 22.13) Устанавливаем видимость
+                    mBinding.recyclerViewDishesList.visibility = View.VISIBLE
+                    mBinding.textViewNoDishesAddedYet.visibility = View.GONE
+                    favouriteDishAdapter.dishesList(it)
+                }else{
+                    mBinding.recyclerViewDishesList.visibility = View.GONE
+                    mBinding.textViewNoDishesAddedYet.visibility = View.VISIBLE
+
+
+                }
                 for (item in it){
                     Log.i("Dish Title", "${item.id}::${item.title}")
                 }
             }
         }
     }
+
+    // 22.1) Идем во fragment_all_dishes и изменяем
+    // 22.2) Создаем item_dish_layout
+    // 22.3) Создаем адаптер FavouriteDishAdapter
 
     // 17) Имплементируем метод для создания меню
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,6 +117,6 @@ class AllDishesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+
     }
 }
