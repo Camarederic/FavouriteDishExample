@@ -12,13 +12,14 @@ import com.example.favouritedishexample.model.entities.FavouriteDish
 import com.example.favouritedishexample.view.fragments.AllDishesFragment
 
 // 22.3) Создаем адаптер
-class FavouriteDishAdapter(private val fragment: Fragment):RecyclerView.Adapter<FavouriteDishAdapter.ViewHolder>() {
+class FavouriteDishAdapter(private val fragment: Fragment) :
+    RecyclerView.Adapter<FavouriteDishAdapter.ViewHolder>() {
 
     // 22.6) Создаем список
     private var dishes: List<FavouriteDish> = listOf()
 
     // 22.4) Создаем класс ViewHolder
-    class ViewHolder(view: ItemDishLayoutBinding):RecyclerView.ViewHolder(view.root){
+    class ViewHolder(view: ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
         val imageViewDishImage = view.imageViewDishImage
         val textViewDishTitle = view.textViewDishTitle
     }
@@ -41,18 +42,19 @@ class FavouriteDishAdapter(private val fragment: Fragment):RecyclerView.Adapter<
 
         // 24.5) Устанавливаем чтобы при клике на item, входили в item
         holder.itemView.setOnClickListener {
-            if (fragment is AllDishesFragment){
-                fragment.dishDetails()
+            if (fragment is AllDishesFragment) {
+                fragment.dishDetails(dish) // 26.6) Добавляем dish
             }
         }
     }
 
     override fun getItemCount(): Int {
-       return dishes.size
+        return dishes.size
     }
+
     // 22.7) Создаем метод для списка еды
     @SuppressLint("NotifyDataSetChanged")
-    fun dishesList(list: List<FavouriteDish>){
+    fun dishesList(list: List<FavouriteDish>) {
         dishes = list
         notifyDataSetChanged()
     }
