@@ -14,6 +14,11 @@ class FavouriteDishViewModel(private val repository: FavouriteDishRepository) : 
     }
     // 21.3) Создаем liveData
     val allDishesList: LiveData<List<FavouriteDish>> = repository.allDishesList.asLiveData()
+
+    // 29.3) Создаем метод update
+    fun update(dish: FavouriteDish) = viewModelScope.launch {
+        repository.updateFavouriteDishData(dish)
+    }
 }
 
 // 19.3) Создаем новый класс

@@ -16,4 +16,9 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
     // 21.2) Создаем список всей еды с дао
     val allDishesList: Flow<List<FavouriteDish>> = favouriteDishDao.getAllDishesList()
 
+    // 29.2) Создаем метод
+    @WorkerThread
+    suspend fun updateFavouriteDishData(favouriteDish: FavouriteDish){
+        favouriteDishDao.updateFavouriteDishDetails(favouriteDish)
+    }
 }
