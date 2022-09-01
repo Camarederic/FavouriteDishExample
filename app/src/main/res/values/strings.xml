@@ -33,4 +33,6 @@
 
     <string name="title_dish_details">Dish Details</string>
 
+    <string name="label_estimate_cooking_time">The approx time required to cook the dish is %1$s</string>
+
 </resources>
