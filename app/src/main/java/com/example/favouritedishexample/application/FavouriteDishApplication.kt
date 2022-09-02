@@ -8,7 +8,7 @@ import com.example.favouritedishexample.model.database.FavouriteDishRoomDatabase
 class FavouriteDishApplication : Application() {
 
     // 19.7) Создаем базу данных и репозиторий по лени
-    private val database by lazy { FavouriteDishRoomDatabase.getDatabase((this@FavouriteDishApplication)) }
+    private val database by lazy { FavouriteDishRoomDatabase.getDatabase(this@FavouriteDishApplication) }
     val repository by lazy { FavouriteDishRepository(database.favouriteDishDao()) }
 
     // 19.8) В манифесте в разделе application добавляем фразу name

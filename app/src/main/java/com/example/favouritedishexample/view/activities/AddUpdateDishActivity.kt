@@ -372,7 +372,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
                     // 11.2) Удаляем эту строчку кода и воспользуемся Glide
                     // mBinding.imageViewDish.setImageBitmap(thumbnail)
-                    Glide.with(this)
+                    Glide.with(this@AddUpdateDishActivity)
                         .load(thumbnail)
                         .centerCrop()
                         .into(mBinding.imageViewDish)
@@ -395,7 +395,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
                     // 11.3) Удаляем эту строчку кода и воспользуемся Glide
                     //mBinding.imageViewDish.setImageURI(selectedPhotoUri)
-                    Glide.with(this)
+                    Glide.with(this@AddUpdateDishActivity)
                         .load(selectedPhotoUri)
                         .centerCrop()
                         // 12.5) Добавляем

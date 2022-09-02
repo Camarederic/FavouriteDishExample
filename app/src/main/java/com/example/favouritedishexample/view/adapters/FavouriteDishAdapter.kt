@@ -53,7 +53,6 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
     }
 
     // 22.7) Создаем метод для списка еды
-    @SuppressLint("NotifyDataSetChanged")
     fun dishesList(list: List<FavouriteDish>) {
         dishes = list
         notifyDataSetChanged()

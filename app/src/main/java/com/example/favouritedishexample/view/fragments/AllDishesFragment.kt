@@ -46,7 +46,7 @@ class AllDishesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // 22.10) Удаляем этот код и пишем другой
 //        homeViewModel =
 //            ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -68,7 +68,7 @@ class AllDishesFragment : Fragment() {
 
         // 22.11) Устанавливаем расположение как сетка
         mBinding.recyclerViewDishesList.layoutManager = GridLayoutManager(requireActivity(),2)
-        val favouriteDishAdapter = FavouriteDishAdapter(this@AllDishesFragment)
+        val favouriteDishAdapter = FavouriteDishAdapter(this)
         mBinding.recyclerViewDishesList.adapter = favouriteDishAdapter
 
 
