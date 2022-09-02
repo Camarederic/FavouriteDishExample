@@ -30,8 +30,13 @@ class MainActivity : AppCompatActivity() {
 
         mNavController = findNavController(R.id.nav_host_fragment)
 
-        val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_all_dishes, R.id.navigation_favourite_dishes, R.id.navigation_random_dish))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+            R.id.navigation_all_dishes,
+                R.id.navigation_favourite_dishes,
+                R.id.navigation_random_dish
+            )
+        )
         setupActionBarWithNavController(mNavController, appBarConfiguration)
         mBinding.navView.setupWithNavController(mNavController)
     }
@@ -44,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     fun hideBottomNavigationView(){
         mBinding.navView.clearAnimation()
         mBinding.navView.animate().translationY(mBinding.navView.height.toFloat()).duration = 300
+
     }
     // 25.5) Создаем метод для появления BottomNavigation
     fun showBottomNavigationView(){

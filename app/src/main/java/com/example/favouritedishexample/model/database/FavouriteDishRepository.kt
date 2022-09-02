@@ -21,4 +21,7 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
     suspend fun updateFavouriteDishData(favouriteDish: FavouriteDish){
         favouriteDishDao.updateFavouriteDishDetails(favouriteDish)
     }
+
+    // 30.2) Создаем список для получения всей еды с дао
+    val favouriteDishes: Flow<List<FavouriteDish>> = favouriteDishDao.getFavouriteDishesList()
 }
