@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.favouritedishexample.databinding.ItemDishLayoutBinding
 import com.example.favouritedishexample.model.entities.FavouriteDish
 import com.example.favouritedishexample.view.fragments.AllDishesFragment
+import com.example.favouritedishexample.view.fragments.FavouriteDishesFragment
 
 // 22.3) Создаем адаптер
 class FavouriteDishAdapter(private val fragment: Fragment) :
@@ -44,6 +45,10 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
         holder.itemView.setOnClickListener {
             if (fragment is AllDishesFragment) {
                 fragment.dishDetails(dish) // 26.6) Добавляем dish
+            }
+            // 32.4) Добавляем проверку
+            if (fragment is FavouriteDishesFragment){
+                fragment.dishDetails(dish)
             }
         }
     }

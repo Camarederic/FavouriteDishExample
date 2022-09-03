@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.FragmentFavouriteDishesBinding
+import com.example.favouritedishexample.model.entities.FavouriteDish
+import com.example.favouritedishexample.view.activities.MainActivity
 import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
 import com.example.favouritedishexample.viewmodel.DashboardViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
@@ -87,10 +90,32 @@ class FavouriteDishesFragment : Fragment() {
         }
     }
 
+    // 32.2) Создаем метод для деталей еды
+    fun dishDetails(favouriteDish: FavouriteDish){
+        // 32.5) Добавляем findNavController
+        findNavController().navigate(FavouriteDishesFragmentDirections.actionFavouriteDishesToDishDetails(favouriteDish))
+
+        // 32.3) Прячем bottomNavigation
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.hideBottomNavigationView()
+        }
+    }
+
     // 31.3) Создаем метод onDestroy
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
     }
+
+    // 32.6) Создаем метод onResume
+    override fun onResume() {
+        super.onResume()
+        // 32.7) Показываем bottomNavigation
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.showBottomNavigationView()
+
+        }
+    }
 }
 // 31.1) Идем в fragment_favourite_dishes и добавляем recyclerView
+// 32.1) Идем в mobile_navigation и добавляем action во fragment
