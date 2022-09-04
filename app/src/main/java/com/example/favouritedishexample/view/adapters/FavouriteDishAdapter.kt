@@ -106,3 +106,5 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
         notifyDataSetChanged()
     }
 }
+// 36.1) Добавляем иконку ic_filter_list
+// 36.2) Далее идем в menu_all_dishes.xml и добавляем новый item
