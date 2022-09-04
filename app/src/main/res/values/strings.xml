@@ -47,4 +47,9 @@
     <string name="title_add_dish">Add Dish</string>
     <string name="label_update_dish">UPDATE DISH</string>
 
+    <string name="title_delete_dish">Delete Dish</string>
+    <string name="message_delete_dish_dialog">Are you sure you want to delete %1$s.</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+
 </resources>
