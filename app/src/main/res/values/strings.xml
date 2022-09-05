@@ -33,7 +33,7 @@
 
     <string name="title_dish_details">Dish Details</string>
 
-    <string name="label_estimate_cooking_time">The approx time required to cook the dish is %1$s</string>
+    <string name="label_estimate_cooking_time">The approx time required to cook the dish is %1$s minutes</string>
 
     <string name="message_added_to_favourites">You have added the dish to your favourites</string>
     <string name="message_removed_from_favourites">You have removed the dish from your favourites</string>

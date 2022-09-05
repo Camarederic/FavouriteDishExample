@@ -13,33 +13,26 @@ import com.example.favouritedishexample.viewmodel.NotificationsViewModel
 
 class RandomDishFragment : Fragment() {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
-    private lateinit var _binding: FragmentRandomDishBinding
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding
+    // 39.4) Создаем binding
+    private var mBinding: FragmentRandomDishBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
 
-        _binding = FragmentRandomDishBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        // 39.5) Инициализируем binding
+        mBinding = FragmentRandomDishBinding.inflate(inflater,container,false)
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        return mBinding!!.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-
+    // 39.6) Создаем метод onDestroy
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding = null
     }
+
+
 }
