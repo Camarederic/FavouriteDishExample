@@ -34,6 +34,12 @@ class AllDishesFragment : Fragment() {
 
     private lateinit var mBinding: FragmentAllDishesBinding
 
+    // 37.1) Создаем переменную adapter
+    private lateinit var mFavouriteDishAdapter: FavouriteDishAdapter
+
+    // 37.2) Создаем переменную для dialog
+    private lateinit var mCustomListDialog: Dialog
+
     // 21.4) Создаем viewModel
     private val mFavouriteDishViewModel: FavouriteDishViewModel by viewModels {
         FavouriteDishViewModelFactory((requireActivity().application as FavouriteDishApplication).repository)
@@ -74,8 +80,13 @@ class AllDishesFragment : Fragment() {
 
         // 22.11) Устанавливаем расположение как сетка
         mBinding.recyclerViewDishesList.layoutManager = GridLayoutManager(requireActivity(), 2)
-        val favouriteDishAdapter = FavouriteDishAdapter(this)
-        mBinding.recyclerViewDishesList.adapter = favouriteDishAdapter
+        // 37.3) Заменяем эту строчку на другую
+        //val favouriteDishAdapter = FavouriteDishAdapter(this)
+        mFavouriteDishAdapter = FavouriteDishAdapter(this)
+
+        // 22.11)
+        mBinding.recyclerViewDishesList.adapter =
+            mFavouriteDishAdapter // 37.4) Заменяем favouriteDishAdapter на mFavouriteDishAdapter
 
 
         // 21.6)
@@ -86,7 +97,7 @@ class AllDishesFragment : Fragment() {
                     // 22.13) Устанавливаем видимость
                     mBinding.recyclerViewDishesList.visibility = View.VISIBLE
                     mBinding.textViewNoDishesAddedYet.visibility = View.GONE
-                    favouriteDishAdapter.dishesList(it)
+                    mFavouriteDishAdapter.dishesList(it) // 37.5) Заменяем favouriteDishAdapter на mFavouriteDishAdapter
                 } else {
                     mBinding.recyclerViewDishesList.visibility = View.GONE
                     mBinding.textViewNoDishesAddedYet.visibility = View.VISIBLE
@@ -154,19 +165,20 @@ class AllDishesFragment : Fragment() {
     // 36.3) Создаем функцию для окна фильтрации списка блюд
     private fun filterDishesListDialog() {
         // 36.4) Создаем диалоговое окно
-        val customListDialog = Dialog(requireActivity())
+        mCustomListDialog =
+            Dialog(requireActivity()) // 37.6) Заменяем val customListDialog на mCustomListDialog
         // 36.5) Создаем binding
         val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
-        customListDialog.setContentView(binding.root)
+        mCustomListDialog.setContentView(binding.root) // 37.7) Заменяем val customListDialog на mCustomListDialog
         binding.textViewTitle.text = resources.getString(R.string.title_select_item_to_filter)
         // 36.7) Создаем список типов блюд
         val dishTypes = Constants.dishTypes()
         dishTypes.add(0, Constants.ALL_ITEMS)
         binding.recyclerViewList.layoutManager = LinearLayoutManager(requireActivity())
         val adapter =
-            CustomListItemAdapter(requireActivity(), dishTypes, Constants.FILTER_SELECTION)
+            CustomListItemAdapter(requireActivity(), this@AllDishesFragment, dishTypes, Constants.FILTER_SELECTION) // 37.13) Добавляем this@AllDishesFragment
         binding.recyclerViewList.adapter = adapter
-        customListDialog.show()
+        mCustomListDialog.show() // 37.8) Заменяем val customListDialog на mCustomListDialog
     }
 
     // 17) Имплементируем метод для создания меню
@@ -185,7 +197,7 @@ class AllDishesFragment : Fragment() {
                 return true
             }
             // 36.8) Добавляем id фильтра
-            R.id.action_filter_dishes ->{
+            R.id.action_filter_dishes -> {
                 // 36.9) Вызываем метод
                 filterDishesListDialog()
                 return true
@@ -194,8 +206,28 @@ class AllDishesFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    // 37.9) Создаем функцию для выбора фильтра
+    fun filterSelection(filterItemSelection: String) {
+        mCustomListDialog.dismiss()
 
+        Log.i("Filter Selection", filterItemSelection)
+
+        // 37.10) Делаем проверку filterItemSelection
+        if (filterItemSelection == Constants.ALL_ITEMS){
+            mFavouriteDishViewModel.allDishesList.observe(viewLifecycleOwner) { dishes ->
+                dishes.let {
+                    if (it.isNotEmpty()) {
+                        mBinding.recyclerViewDishesList.visibility = View.VISIBLE
+                        mBinding.textViewNoDishesAddedYet.visibility = View.GONE
+                        mFavouriteDishAdapter.dishesList(it)
+                    } else {
+                        mBinding.recyclerViewDishesList.visibility = View.GONE
+                        mBinding.textViewNoDishesAddedYet.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }else{
+            Log.i("Filter List", "Get Filter List")
+        }
     }
 }
