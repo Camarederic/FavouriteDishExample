@@ -34,5 +34,7 @@ class RandomDishFragment : Fragment() {
         mBinding = null
     }
 
-
 }
+// 40.1) Дальше идем на сайт spoonacular.com/food-api и берем рецепты
+// 40.2) Идем в settings -> plugins и устанавливаем плагин JSON TO Kotlin Class
+// 40.3) Далее создаем в папке entities класс RandomDish
