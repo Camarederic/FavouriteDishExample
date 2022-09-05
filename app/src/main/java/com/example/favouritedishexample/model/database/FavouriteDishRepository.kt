@@ -30,4 +30,7 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
     suspend fun deleteFavouriteDishData(favouriteDish: FavouriteDish){
         favouriteDishDao.deleteFavouriteDishDetails(favouriteDish)
     }
+
+    // 38.2) Создаем метод для фильтрации списка блюд
+    fun filteredListDishes(value: String): Flow<List<FavouriteDish>> = favouriteDishDao.getFilteredDishesList(value)
 }

@@ -28,6 +28,10 @@ class FavouriteDishViewModel(private val repository: FavouriteDishRepository) : 
         repository.deleteFavouriteDishData(dish)
     }
 
+    // 38.3) Создаем метод для фильтрации
+    fun getFilteredList(value:String): LiveData<List<FavouriteDish>> =
+        repository.filteredListDishes(value).asLiveData()
+
 }
 
 // 19.3) Создаем новый класс
