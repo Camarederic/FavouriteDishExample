@@ -11,7 +11,7 @@ interface RandomDishAPI {
 
     // 41.3) Создаем функцию для получения блюд
     @GET(Constants.API_ENDPOINT)
-    fun getDishes(
+    fun getRandomDish(
 
         // 41.5) Делаем запросы на наши параметры из сайта
     @Query(Constants.API_KEY) apiKey: String,
