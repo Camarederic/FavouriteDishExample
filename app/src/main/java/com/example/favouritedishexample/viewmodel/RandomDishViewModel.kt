@@ -1,6 +1,7 @@
 package com.example.favouritedishexample.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.favouritedishexample.model.entities.RandomDish
 import com.example.favouritedishexample.model.network.RandomDishApiService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -10,7 +11,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 // 43.0) Добавляем библиотеку RxJava3 в gradle
 // 43.1) Создаем класс
-class RandomDishViewModel {
+class RandomDishViewModel: ViewModel() { // 44.3) Наследуемся от ViewModel
 
     // 43.2) Создаем объекты
     private val randomRecipeApiService = RandomDishApiService()
