@@ -1,6 +1,7 @@
 package com.example.favouritedishexample.view.activities
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -49,11 +50,14 @@ class MainActivity : AppCompatActivity() {
     fun hideBottomNavigationView(){
         mBinding.navView.clearAnimation()
         mBinding.navView.animate().translationY(mBinding.navView.height.toFloat()).duration = 300
-
+        // 45.9) Добавляем visibility
+        mBinding.navView.visibility = View.GONE
     }
     // 25.5) Создаем метод для появления BottomNavigation
     fun showBottomNavigationView(){
         mBinding.navView.clearAnimation()
         mBinding.navView.animate().translationY(0f).duration = 300
+        // 45.10) Добавляем visibility
+        mBinding.navView.visibility = View.VISIBLE
     }
 }
