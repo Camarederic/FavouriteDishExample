@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
@@ -197,7 +198,14 @@ class AddUpdateDishActivity : AppCompatActivity(),
             if (requestCode == CAMERA){
                 data?.extras?.let {
                     val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
-                    mBinding.imageViewDish.setImageBitmap(thumbnail)
+
+                    // 11.2) Удаляем эту строчку кода и воспользуемся Glide
+                    // mBinding.imageViewDish.setImageBitmap(thumbnail)
+                    Glide.with(this)
+                        .load(thumbnail)
+                        .centerCrop()
+                        .into(mBinding.imageViewDish)
+
 
                     // 9.6) Загружаем векторную картинку edit
 
@@ -211,7 +219,12 @@ class AddUpdateDishActivity : AppCompatActivity(),
                 data?.let {
                     val selectedPhotoUri = data.data
 
-                    mBinding.imageViewDish.setImageURI(selectedPhotoUri)
+                    // 11.3) Удаляем эту строчку кода и воспользуемся Glide
+                    //mBinding.imageViewDish.setImageURI(selectedPhotoUri)
+                    Glide.with(this)
+                        .load(selectedPhotoUri)
+                        .centerCrop()
+                        .into(mBinding.imageViewDish)
 
                     mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_vector_edit))
@@ -260,3 +273,4 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
 // 8.1) Добавляем разрешение в манифест
 // 8.2) Добавляем библиотеку dexter в gradle
+// 11.1) Добавляем библиотеку Glide в gradle

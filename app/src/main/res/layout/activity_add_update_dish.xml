@@ -36,6 +36,7 @@
                 android:id="@+id/frameLayoutSelect"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
+                android:background="@color/blue_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -43,9 +44,8 @@
                 <ImageView
                     android:id="@+id/imageViewDish"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY"
-                    android:src="@drawable/fish"
                     tools:ignore="ImageContrastCheck" />
 
                 <ImageView
