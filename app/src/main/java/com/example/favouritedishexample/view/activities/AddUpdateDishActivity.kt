@@ -5,9 +5,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Camera
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,7 +23,13 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
@@ -32,12 +41,17 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import java.io.*
+import java.util.*
 
 // 10) Создаем активити
 class AddUpdateDishActivity : AppCompatActivity(),
     View.OnClickListener { // 21) Добавляем View.OnClickListener
 
     private lateinit var mBinding: ActivityAddUpdateDishBinding
+
+    // 12.3) Создаем переменную для пути картинки
+    private var mImagePath : String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -206,6 +220,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
                         .centerCrop()
                         .into(mBinding.imageViewDish)
 
+                    // 12.4) Вставляем в путь картинки наш метод
+                    mImagePath = saveImageToInternalStorage(thumbnail)
+                    Log.i("ImagePath", mImagePath)
 
                     // 9.6) Загружаем векторную картинку edit
 
@@ -224,6 +241,38 @@ class AddUpdateDishActivity : AppCompatActivity(),
                     Glide.with(this)
                         .load(selectedPhotoUri)
                         .centerCrop()
+                        // 12.5) Добавляем
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        // 12.6) Добавляем два метода
+                        .listener(object : RequestListener<Drawable>{
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean,
+                            ): Boolean {
+                                // 12.7) Добавляем Log
+                                Log.e("TAG", "Error loading image", e)
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean,
+                            ): Boolean {
+                                // 12.8)
+                                resource?.let {
+                                    val bitmap: Bitmap = resource.toBitmap()
+                                    mImagePath = saveImageToInternalStorage(bitmap)
+                                    Log.i("ImagePath", mImagePath)
+                                }
+                                return false
+                            }
+
+                        })
                         .into(mBinding.imageViewDish)
 
                     mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
@@ -256,6 +305,24 @@ class AddUpdateDishActivity : AppCompatActivity(),
             }.show()
     }
 
+    // 12.2) Создаем метод для сохранения изображения во внутреннюю память
+    private fun saveImageToInternalStorage(bitmap: Bitmap): String{
+        val wrapper = ContextWrapper(applicationContext)
+
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg" )
+
+        try {
+            val stream : OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        return file.absolutePath
+    }
+
     // 9.4) Создаем константу для камеры
     companion object {
 
@@ -263,6 +330,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
         // 10.1) Создаем константу для галереи
         private const val GALLERY = 2
+
+        // 12.1) Создаем константу для директории картинки
+        private const val IMAGE_DIRECTORY = "FavouriteDishImages"
     }
 }
 
