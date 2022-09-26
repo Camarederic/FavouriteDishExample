@@ -91,7 +91,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
         // 34.6) Обновляем картинку и все компоненты
         mFavouriteDishDetails?.let {
-            if (it.id != 0){
+            if (it.id != 0) {
                 mImagePath = it.image
                 Glide.with(this@AddUpdateDishActivity)
                     .load(mImagePath)
@@ -126,11 +126,11 @@ class AddUpdateDishActivity : AppCompatActivity(),
         setSupportActionBar(mBinding.toolbarAddDishActivity)
 
         // 34.5) Проверяем на null
-        if (mFavouriteDishDetails != null && mFavouriteDishDetails!!.id != 0){
+        if (mFavouriteDishDetails != null && mFavouriteDishDetails!!.id != 0) {
             supportActionBar?.let {
                 it.title = resources.getString(R.string.title_edit_dish)
             }
-        }else{
+        } else {
             supportActionBar?.let {
                 it.title = resources.getString(R.string.title_add_dish)
             }
@@ -228,7 +228,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
                             var imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL
                             var favouriteDish = false
                             mFavouriteDishDetails?.let {
-                                if (it.id != 0){
+                                if (it.id != 0) {
                                     dishId = it.id
                                     imageSource = it.imageSource
                                     favouriteDish = it.favouriteDish
@@ -251,12 +251,12 @@ class AddUpdateDishActivity : AppCompatActivity(),
                                 cookingTimeInMinutes,
                                 cookingDirection,
                                 //false // 34.11) Удаляем false и добавляем favouriteDish и dishId
-                            favouriteDish,
+                                favouriteDish,
                                 dishId
                             )
 
                             // 34.8)
-                            if (dishId == 0){
+                            if (dishId == 0) {
                                 // 34.9) Переносим этот код сюда
                                 mFavouriteDishViewModel.insert(favouriteDishDetails)
                                 // 20.5) Пишем другое тоаст сообщение
@@ -266,14 +266,14 @@ class AddUpdateDishActivity : AppCompatActivity(),
                                 Log.i("Insertion", "Success")
 
                                 // 34.12)
-                            }else{
+                            } else {
                                 mFavouriteDishViewModel.update(favouriteDishDetails)
                                 Toast.makeText(this@AddUpdateDishActivity,
-                                "You successfully updated your favourite dish details.",
-                                Toast.LENGTH_SHORT).show()
+                                    "You successfully updated your favourite dish details.",
+                                    Toast.LENGTH_SHORT).show()
                                 Log.e("Updating", "Success")
                             }
-                              // Переносим этот код выше
+                            // Переносим этот код выше
 //                            // 20.4) Вставляем во viewModel детали
 //                            mFavouriteDishViewModel.insert(favouriteDishDetails)
 //                            // 20.5) Пишем другое тоаст сообщение
@@ -414,7 +414,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
         binding.recyclerViewList.layoutManager = LinearLayoutManager(this)
 
         // 13.14) Создаем адаптер
-        val adapter = CustomListItemAdapter(this, itemList, selection)
+        val adapter = CustomListItemAdapter(this, null, itemList, selection) // 37.12) Добавляем null
         binding.recyclerViewList.adapter = adapter
         mCustomListDialog.show() // 14.4) Заменяем customListDialog на mCustomListDialog
     }
