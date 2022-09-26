@@ -20,11 +20,24 @@ object Constants {
 
     // 41.1) Создаем константу
     const val API_ENDPOINT: String = "recipes/random"
+
     // 41.4) Создаем константы для параметров из сайта для рецептов
     const val API_KEY: String = "apiKey"
     const val LIMIT_LICENSE: String = "limitLicense"
     const val TAGS: String = "tags"
     const val NUMBER: String = "number"
+
+    // 42.2) Создаем константу для url
+    const val BASE_URL = "https://api.spoonacular.com/"
+
+    // 42.3) Создаем константу своего Api Key(ключ на сайте рецептов)
+    const val API_KEY_VALUE: String = "2be8b0061bbb48f9bcba47cba44016e9"
+
+    // 42.4) Создаем константы
+    const val LIMIT_LICENSE_VALUE: Boolean = true
+    const val TAGS_VALUE: String = "vegetarian, dessert"
+    const val NUMBER_VALUE: Int = 1
+
 
     // 13.4) Создаем метод для типов еды
     fun dishTypes(): ArrayList<String> {
