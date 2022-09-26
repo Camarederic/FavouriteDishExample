@@ -1,6 +1,7 @@
 package com.example.favouritedishexample.view.fragments
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,12 +14,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
+import com.example.favouritedishexample.databinding.DialogCustomListBinding
 import com.example.favouritedishexample.databinding.FragmentAllDishesBinding
 import com.example.favouritedishexample.model.entities.FavouriteDish
+import com.example.favouritedishexample.utils.Constants
 import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
 import com.example.favouritedishexample.view.activities.MainActivity
+import com.example.favouritedishexample.view.adapters.CustomListItemAdapter
 import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModelFactory
@@ -59,7 +64,7 @@ class AllDishesFragment : Fragment() {
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
 //            textView.text = it
 //        })
-        mBinding = FragmentAllDishesBinding.inflate(inflater, container,false)
+        mBinding = FragmentAllDishesBinding.inflate(inflater, container, false)
         return mBinding.root
     }
 
@@ -68,28 +73,27 @@ class AllDishesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 22.11) Устанавливаем расположение как сетка
-        mBinding.recyclerViewDishesList.layoutManager = GridLayoutManager(requireActivity(),2)
+        mBinding.recyclerViewDishesList.layoutManager = GridLayoutManager(requireActivity(), 2)
         val favouriteDishAdapter = FavouriteDishAdapter(this)
         mBinding.recyclerViewDishesList.adapter = favouriteDishAdapter
 
 
         // 21.6)
-        mFavouriteDishViewModel.allDishesList.observe(viewLifecycleOwner){
-            dishes ->
+        mFavouriteDishViewModel.allDishesList.observe(viewLifecycleOwner) { dishes ->
             dishes.let {
                 // 22.12) Проверяем на пустоту
-                if (it.isNotEmpty()){
+                if (it.isNotEmpty()) {
                     // 22.13) Устанавливаем видимость
                     mBinding.recyclerViewDishesList.visibility = View.VISIBLE
                     mBinding.textViewNoDishesAddedYet.visibility = View.GONE
                     favouriteDishAdapter.dishesList(it)
-                }else{
+                } else {
                     mBinding.recyclerViewDishesList.visibility = View.GONE
                     mBinding.textViewNoDishesAddedYet.visibility = View.VISIBLE
 
 
                 }
-                for (item in it){
+                for (item in it) {
                     Log.i("Dish Title", "${item.id}::${item.title}")
                 }
             }
@@ -104,19 +108,19 @@ class AllDishesFragment : Fragment() {
     // 26.3) Далее идем в mobile_navigation.xml и во фрагменте navigation_dish_details добавляем аргумент
 
     // 24.3) Создаем метод для деталей еды
-    fun dishDetails(favouriteDish: FavouriteDish){ // 26.5) Добавляем аргумент
+    fun dishDetails(favouriteDish: FavouriteDish) { // 26.5) Добавляем аргумент
         // 24.4) Устанавливаем навигацию из фрагмента AllDishes во фрагмент DishDetails
         findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails(
             favouriteDish)) // 26.4) Добавляем
 
         // 25.6) Делаем проверку и прячем BottomNavigation
-        if (requireActivity() is MainActivity){
+        if (requireActivity() is MainActivity) {
             (activity as MainActivity?)?.hideBottomNavigationView()
         }
     }
 
     // 35.4) Создаем функцию для деления еды
-    fun deleteDish(dish: FavouriteDish){
+    fun deleteDish(dish: FavouriteDish) {
         // 35.5) Создаем объект AlertDialog
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(resources.getString(R.string.title_delete_dish))
@@ -125,12 +129,12 @@ class AllDishesFragment : Fragment() {
         // 35.7) Вставляем иконку
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         // 35.8) Устанавливаем кнопку Yes(positiveButton)
-        builder.setPositiveButton(resources.getString(R.string.label_yes)){ dialogInterface, _ ->
+        builder.setPositiveButton(resources.getString(R.string.label_yes)) { dialogInterface, _ ->
             mFavouriteDishViewModel.delete(dish)
             dialogInterface.dismiss()
         }
         // 35.9) Устанавливаем кнопку No(negativeButton)
-        builder.setNegativeButton(resources.getString(R.string.label_no)){ dialogInterface, _ ->
+        builder.setNegativeButton(resources.getString(R.string.label_no)) { dialogInterface, _ ->
             dialogInterface.dismiss()
         }
         // 35.10) Создаем AlertDialog
@@ -142,9 +146,27 @@ class AllDishesFragment : Fragment() {
     // 25.7) Создаем метод onResume и в нем вызываем метод для появления BottomNavigation
     override fun onResume() {
         super.onResume()
-        if (requireActivity() is MainActivity){
+        if (requireActivity() is MainActivity) {
             (activity as MainActivity?)?.showBottomNavigationView()
         }
+    }
+
+    // 36.3) Создаем функцию для окна фильтрации списка блюд
+    private fun filterDishesListDialog() {
+        // 36.4) Создаем диалоговое окно
+        val customListDialog = Dialog(requireActivity())
+        // 36.5) Создаем binding
+        val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
+        customListDialog.setContentView(binding.root)
+        binding.textViewTitle.text = resources.getString(R.string.title_select_item_to_filter)
+        // 36.7) Создаем список типов блюд
+        val dishTypes = Constants.dishTypes()
+        dishTypes.add(0, Constants.ALL_ITEMS)
+        binding.recyclerViewList.layoutManager = LinearLayoutManager(requireActivity())
+        val adapter =
+            CustomListItemAdapter(requireActivity(), dishTypes, Constants.FILTER_SELECTION)
+        binding.recyclerViewList.adapter = adapter
+        customListDialog.show()
     }
 
     // 17) Имплементируем метод для создания меню
@@ -160,6 +182,12 @@ class AllDishesFragment : Fragment() {
         when (item.itemId) {
             R.id.action_add_dish -> {
                 startActivity(Intent(requireActivity(), AddUpdateDishActivity::class.java))
+                return true
+            }
+            // 36.8) Добавляем id фильтра
+            R.id.action_filter_dishes ->{
+                // 36.9) Вызываем метод
+                filterDishesListDialog()
                 return true
             }
         }

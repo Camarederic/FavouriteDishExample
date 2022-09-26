@@ -8,11 +8,15 @@ object Constants {
     const val DISH_COOKING_TIME: String = "DishCookingTime"
 
     // 20.2) Создаем две константы
-    const val DISH_IMAGE_SOURCE_LOCAL : String = "Local"
-    const val DISH_IMAGE_SOURCE_ONLINE : String = "Online"
+    const val DISH_IMAGE_SOURCE_LOCAL: String = "Local"
+    const val DISH_IMAGE_SOURCE_ONLINE: String = "Online"
 
     // 34.1) Создаем константу
     const val EXTRA_DISH_DETAILS: String = "DishDetails"
+
+    // 36.6) Создаем две константы для filter menu item
+    const val ALL_ITEMS: String = "All"
+    const val FILTER_SELECTION: String = "FilterSelection"
 
     // 13.4) Создаем метод для типов еды
     fun dishTypes(): ArrayList<String> {
@@ -29,7 +33,7 @@ object Constants {
     }
 
     // 13.5) Создаем метод для категорий еды
-    fun dishCategories():ArrayList<String>{
+    fun dishCategories(): ArrayList<String> {
         val list = ArrayList<String>()
         list.add("Pizza")
         list.add("BBQ")
@@ -49,7 +53,7 @@ object Constants {
     }
 
     // 13.6) Создаем метод для приготовления еды
-    fun dishCookTime():ArrayList<String>{
+    fun dishCookTime(): ArrayList<String> {
         val list = ArrayList<String>()
         list.add("10")
         list.add("15")

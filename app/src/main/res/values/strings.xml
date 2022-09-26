@@ -52,4 +52,7 @@
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
 
+    <string name="action_filter_dishes">Filter Dishes</string>
+    <string name="title_select_item_to_filter">SELECT ITEM TO FILTER</string>
+
 </resources>
