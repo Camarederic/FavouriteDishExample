@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.favouritedishexample.databinding.ItemDishLayoutBinding
 import com.example.favouritedishexample.model.entities.FavouriteDish
+import com.example.favouritedishexample.view.fragments.AllDishesFragment
 
 // 22.3) Создаем адаптер
 class FavouriteDishAdapter(private val fragment: Fragment):RecyclerView.Adapter<FavouriteDishAdapter.ViewHolder>() {
@@ -37,6 +38,13 @@ class FavouriteDishAdapter(private val fragment: Fragment):RecyclerView.Adapter<
             .load(dish.image)
             .into(holder.imageViewDishImage)
         holder.textViewDishTitle.text = dish.title
+
+        // 24.5) Устанавливаем чтобы при клике на item, входили в item
+        holder.itemView.setOnClickListener {
+            if (fragment is AllDishesFragment){
+                fragment.dishDetails()
+            }
+        }
     }
 
     override fun getItemCount(): Int {

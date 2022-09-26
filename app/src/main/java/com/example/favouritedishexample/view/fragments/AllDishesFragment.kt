@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
@@ -96,6 +97,12 @@ class AllDishesFragment : Fragment() {
     // 22.2) Создаем item_dish_layout
     // 22.3) Создаем адаптер FavouriteDishAdapter
     // 23.1) Переименовываем фрагменты
+
+    // 24.3) Создаем метод для деталей еды
+    fun dishDetails(){
+        // 24.4) Устанавливаем навигацию из фрагмента AllDishes во фрагмент DishDetails
+        findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails())
+    }
 
     // 17) Имплементируем метод для создания меню
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
