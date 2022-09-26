@@ -11,16 +11,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.FragmentFavouriteDishesBinding
+import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
 import com.example.favouritedishexample.viewmodel.DashboardViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModelFactory
 
 class FavouriteDishesFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+
+    // 31.2) Добавляем binding
+    private var mBinding: FragmentFavouriteDishesBinding? = null
 
     // 30.4) Создаем viewModel
     private val mFavouriteDishesViewModel: FavouriteDishViewModel by viewModels {
@@ -33,16 +37,21 @@ class FavouriteDishesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
 
-        val root = inflater.inflate(R.layout.fragment_favourite_dishes, container, false)
+        // 31.4) Инициализируем binding
+        mBinding = FragmentFavouriteDishesBinding.inflate(inflater, container, false)
 
-        val textView: TextView = root.findViewById(R.id.textFavouriteDishes)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        // 31.5) Удаляем этот код
+//        dashboardViewModel =
+//            ViewModelProvider(this).get(DashboardViewModel::class.java)
+//
+//        val root = inflater.inflate(R.layout.fragment_favourite_dishes, container, false)
+//
+//        val textView: TextView = root.findViewById(R.id.textViewNoFavouriteDishesAvailable)
+//        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
+//            textView.text = it
+//        })
+        return mBinding!!.root
     }
 
     // 30.5) Создаем метод onViewCreated
@@ -53,14 +62,35 @@ class FavouriteDishesFragment : Fragment() {
         // 30.6)
         mFavouriteDishesViewModel.favouriteDishes.observe(viewLifecycleOwner) { dishes ->
             dishes.let {
+
+                // 31.6) Устанавливаем сетку для recyclerView и адаптер
+                mBinding!!.recyclerViewFavouriteDishesList.layoutManager =
+                    GridLayoutManager(requireActivity(),2)
+                val adapter = FavouriteDishAdapter(this)
+                mBinding!!.recyclerViewFavouriteDishesList.adapter = adapter
+
                 if (it.isNotEmpty()) {
-                    for (dish in it) {
-                        Log.i("Favourite Dish", "${dish.id}::${dish.title}")
-                    }
+                    // 31.7) Удаляем этот код
+//                    for (dish in it) {
+//                        Log.i("Favourite Dish", "${dish.id}::${dish.title}")
+//                    }
+                    // 31.8) Устнавливаем видимость
+                    mBinding!!.recyclerViewFavouriteDishesList.visibility = View.VISIBLE
+                    mBinding!!.textViewNoFavouriteDishesAvailable.visibility = View.GONE
+                    adapter.dishesList(it)
                 }else{
                     Log.i("List of Favourite Dishes", "is empty.")
+                    mBinding!!.recyclerViewFavouriteDishesList.visibility = View.GONE
+                    mBinding!!.textViewNoFavouriteDishesAvailable.visibility = View.VISIBLE
                 }
             }
         }
     }
+
+    // 31.3) Создаем метод onDestroy
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding = null
+    }
 }
+// 31.1) Идем в fragment_favourite_dishes и добавляем recyclerView
