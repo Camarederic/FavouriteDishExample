@@ -119,3 +119,6 @@ class FavouriteDishesFragment : Fragment() {
 }
 // 31.1) Идем в fragment_favourite_dishes и добавляем recyclerView
 // 32.1) Идем в mobile_navigation и добавляем action во fragment
+// 33.1) Добавляем новуб иконку ic_more
+// 33.2) Идем в item_dish_layout и добавляем иконку ic_more
+// 33.3) Создаем в папке menu menu_adapter

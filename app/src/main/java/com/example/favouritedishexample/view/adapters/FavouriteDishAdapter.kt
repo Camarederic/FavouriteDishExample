@@ -1,12 +1,15 @@
 package com.example.favouritedishexample.view.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ItemDishLayoutBinding
 import com.example.favouritedishexample.model.entities.FavouriteDish
 import com.example.favouritedishexample.view.fragments.AllDishesFragment
@@ -23,6 +26,8 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
     class ViewHolder(view: ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
         val imageViewDishImage = view.imageViewDishImage
         val textViewDishTitle = view.textViewDishTitle
+        // 33.4) Добавляем для imageButton
+        val imageButtonMore = view.imageButtonMore
     }
 
     // 22.5) Имплементируем три метода
@@ -50,6 +55,30 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
             if (fragment is FavouriteDishesFragment){
                 fragment.dishDetails(dish)
             }
+        }
+
+        // 33.5) Добавляем клик слушателя для imageButtonMore
+        holder.imageButtonMore.setOnClickListener {
+            // 33.6) Создаем объект PopupMenu
+            val popup = PopupMenu(fragment.context, holder.imageButtonMore)
+            popup.menuInflater.inflate(R.menu.menu_adapter, popup.menu)
+
+            // 33.7) Создаем клик слушателя для EDIT DISH и DELETE DISH
+            popup.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_edit_dish){
+                    Log.i("You have clicked on", "Edit Option of ${dish.title}")
+                }else if (it.itemId == R.id.action_delete_dish){
+                    Log.i("You have clicked on", "Delete Option of ${dish.title}")
+                }
+                true
+            }
+            popup.show()
+        }
+        // 33.8) Устанавливаем видимость и исчезновение popupMenu для разных фрагментов
+        if (fragment is AllDishesFragment){
+            holder.imageButtonMore.visibility = View.VISIBLE
+        }else if (fragment is FavouriteDishesFragment){
+            holder.imageButtonMore.visibility = View.GONE
         }
     }
 
