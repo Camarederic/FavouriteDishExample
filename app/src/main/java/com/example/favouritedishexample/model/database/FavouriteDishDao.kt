@@ -1,9 +1,6 @@
 package com.example.favouritedishexample.model.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.example.favouritedishexample.model.entities.FavouriteDish
 import kotlinx.coroutines.flow.Flow
 
@@ -27,4 +24,8 @@ interface FavouriteDishDao {
     // 30.1) Создаем метод для получения любимых блюд
     @Query("SELECT * FROM FAVOURITE_DISHES_TABLE WHERE favourite_dish = 1")
     fun getFavouriteDishesList():Flow<List<FavouriteDish>>
+
+    // 35.1) Создаем метод для удаления любимых блюд
+    @Delete
+    suspend fun deleteFavouriteDishDetails(favouriteDish: FavouriteDish)
 }

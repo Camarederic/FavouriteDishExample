@@ -16,7 +16,7 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
     // 21.2) Создаем список всей еды с дао
     val allDishesList: Flow<List<FavouriteDish>> = favouriteDishDao.getAllDishesList()
 
-    // 29.2) Создаем метод
+    // 29.2) Создаем метод обновления
     @WorkerThread
     suspend fun updateFavouriteDishData(favouriteDish: FavouriteDish){
         favouriteDishDao.updateFavouriteDishDetails(favouriteDish)
@@ -24,4 +24,10 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
 
     // 30.2) Создаем список для получения всей еды с дао
     val favouriteDishes: Flow<List<FavouriteDish>> = favouriteDishDao.getFavouriteDishesList()
+
+    // 35.2) Создаем метод для удаления
+    @WorkerThread
+    suspend fun deleteFavouriteDishData(favouriteDish: FavouriteDish){
+        favouriteDishDao.deleteFavouriteDishDetails(favouriteDish)
+    }
 }

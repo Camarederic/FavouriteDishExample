@@ -79,6 +79,10 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
 
                 } else if (it.itemId == R.id.action_delete_dish) {
                     Log.i("You have clicked on", "Delete Option of ${dish.title}")
+                    // 35.11)
+                    if (fragment is AllDishesFragment){
+                        fragment.deleteDish(dish)
+                    }
                 }
                 true
             }

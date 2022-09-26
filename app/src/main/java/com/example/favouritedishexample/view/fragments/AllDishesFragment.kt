@@ -1,5 +1,6 @@
 package com.example.favouritedishexample.view.fragments
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -112,6 +113,30 @@ class AllDishesFragment : Fragment() {
         if (requireActivity() is MainActivity){
             (activity as MainActivity?)?.hideBottomNavigationView()
         }
+    }
+
+    // 35.4) Создаем функцию для деления еды
+    fun deleteDish(dish: FavouriteDish){
+        // 35.5) Создаем объект AlertDialog
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(resources.getString(R.string.title_delete_dish))
+        // 35.6) Посылаем сообщение
+        builder.setMessage(resources.getString(R.string.message_delete_dish_dialog, dish.title))
+        // 35.7) Вставляем иконку
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        // 35.8) Устанавливаем кнопку Yes(positiveButton)
+        builder.setPositiveButton(resources.getString(R.string.label_yes)){ dialogInterface, _ ->
+            mFavouriteDishViewModel.delete(dish)
+            dialogInterface.dismiss()
+        }
+        // 35.9) Устанавливаем кнопку No(negativeButton)
+        builder.setNegativeButton(resources.getString(R.string.label_no)){ dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        // 35.10) Создаем AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 
     // 25.7) Создаем метод onResume и в нем вызываем метод для появления BottomNavigation

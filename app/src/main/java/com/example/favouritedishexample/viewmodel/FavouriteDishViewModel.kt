@@ -22,6 +22,12 @@ class FavouriteDishViewModel(private val repository: FavouriteDishRepository) : 
 
     // 30.3) Создаем liveData для любимых блюд
     val favouriteDishes: LiveData<List<FavouriteDish>> = repository.favouriteDishes.asLiveData()
+
+    // 35.3) Создаем метод delete
+    fun delete(dish: FavouriteDish) = viewModelScope.launch {
+        repository.deleteFavouriteDishData(dish)
+    }
+
 }
 
 // 19.3) Создаем новый класс
