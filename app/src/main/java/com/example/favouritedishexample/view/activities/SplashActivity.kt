@@ -1,4 +1,4 @@
-package com.example.favouritedishexample
+package com.example.favouritedishexample.view.activities
 
 import android.content.Intent
 import android.os.Build
@@ -10,6 +10,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivitySplashBinding
 
 // 1) Создаем сплеш активити и binding
@@ -56,6 +57,13 @@ class SplashActivity : AppCompatActivity() {
 
         })
     }
+
+    // 9) Создаем папки model, view. Во view создаем две папки - activities и fragments.
+    // Перемещаем MainActivity и SplashActivity в папку activities и все фрагменты в папку fragments
+    // Также создаем папку viewmodel и перемещаем туда все viewModels
+    // И потом удаляем папку ui
+
+    // 10) Создаем активити AddUpdateDishActivity
 
     // 5) Создаем файл anim и в ней anim_splash
 

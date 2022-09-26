@@ -1,4 +1,4 @@
-package com.example.favouritedishexample.ui.notifications
+package com.example.favouritedishexample.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
