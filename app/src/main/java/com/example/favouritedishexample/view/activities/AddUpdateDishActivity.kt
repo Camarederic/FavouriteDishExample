@@ -1,13 +1,24 @@
 package com.example.favouritedishexample.view.activities
 
+import android.Manifest
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 // 10) Создаем активити
 class AddUpdateDishActivity : AppCompatActivity(),
@@ -64,16 +75,92 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
         // 31) Создаем клики слушателей на камеру и пфллерею
         binding.textViewCamera.setOnClickListener {
-            Toast.makeText(this, "Camera Clicked", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Camera Clicked", Toast.LENGTH_SHORT).show()
+
+            // 8.3) Применяем разрешения при помощи библиотеки Dexter для камеры
+            Dexter.withContext(this)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA)
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        // 8.4) Делаем проверку
+                        if (report!!.areAllPermissionsGranted()) {
+                            Toast.makeText(this@AddUpdateDishActivity,
+                                "You have camera permission now.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // 8.8) Вызываем метод
+                            showRationalDialogForPermissions()
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        // 8.5) Изменяем названия на permissions и token
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?,
+                    ) {
+                        // 8.7) Вызываем метод
+                        showRationalDialogForPermissions()
+                    }
+
+                }).onSameThread().check()
+
+
             dialog.dismiss()
         }
+
         binding.textViewGallery.setOnClickListener {
-            Toast.makeText(this, "Gallery Clicked", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Gallery Clicked", Toast.LENGTH_SHORT).show()
+
+            // 8.9) Применяем разрешения при помощи библиотеки Dexter для галереи
+            Dexter.withContext(this)
+                .withPermissions(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        if (report!!.areAllPermissionsGranted())
+                            Toast.makeText(this@AddUpdateDishActivity,
+                                "You have the Gallery permission now to select image.",
+                            Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?,
+                    ) {
+                        showRationalDialogForPermissions()
+                    }
+
+                }).onSameThread().check()
+
+
             dialog.dismiss()
         }
 
         // 30) Показываем диалоговое окно
         dialog.show()
+    }
+
+    // 8.6) Создаем метод для показа диалогового окна для разрешений
+    private fun showRationalDialogForPermissions() {
+        AlertDialog.Builder(this).setMessage("It Looks like you have turned off permissions" +
+                " required for this feature. It can be enabled under Application Settings")
+            .setPositiveButton("GO TO SETTINGS") { _, _ ->
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    e.printStackTrace()
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 }
 
@@ -81,3 +168,6 @@ class AddUpdateDishActivity : AppCompatActivity(),
 // 12) Меняем название HomeFragment на AllDishesFragment и xml файл
 // 13) Добавляем иконку плюс
 // 14) Далее создаем в папку menu, menu_all_dishes
+
+// 8.1) Добавляем разрешение в манифест
+// 8.2) Добавляем библиотеку dexter в gradle
