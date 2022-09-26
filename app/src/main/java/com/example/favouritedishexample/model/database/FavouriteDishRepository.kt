@@ -13,7 +13,7 @@ class FavouriteDishRepository(private val favouriteDishDao: FavouriteDishDao) {
         favouriteDishDao.insertFavouriteDishDetails(favouriteDish)
     }
 
-    // 20.2) Создаем список всей еды с дао
+    // 21.2) Создаем список всей еды с дао
     val allDishesList: Flow<List<FavouriteDish>> = favouriteDishDao.getAllDishesList()
 
 }

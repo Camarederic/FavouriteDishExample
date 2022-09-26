@@ -12,7 +12,7 @@ class FavouriteDishViewModel(private val repository: FavouriteDishRepository) : 
     fun insert(dish:FavouriteDish) = viewModelScope.launch{
         repository.insertFavouriteDishData(dish)
     }
-    // 20.3) Создаем liveData
+    // 21.3) Создаем liveData
     val allDishesList: LiveData<List<FavouriteDish>> = repository.allDishesList.asLiveData()
 }
 
