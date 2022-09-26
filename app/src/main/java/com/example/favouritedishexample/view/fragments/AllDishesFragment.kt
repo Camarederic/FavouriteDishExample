@@ -246,3 +246,6 @@ class AllDishesFragment : Fragment() {
         }
     }
 }
+// 39.1) Вставляем в gradle библиотеку retrofit
+// 39.2) Идем во fragment_random_dish
+// 39.3) Идем в RandomDishFragment
