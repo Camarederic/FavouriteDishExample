@@ -16,6 +16,7 @@ import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.FragmentAllDishesBinding
 import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
+import com.example.favouritedishexample.view.activities.MainActivity
 import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModel
 import com.example.favouritedishexample.viewmodel.FavouriteDishViewModelFactory
@@ -102,6 +103,19 @@ class AllDishesFragment : Fragment() {
     fun dishDetails(){
         // 24.4) Устанавливаем навигацию из фрагмента AllDishes во фрагмент DishDetails
         findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails())
+
+        // 25.6) Делаем проверку и прячем BottomNavigation
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)?.hideBottomNavigationView()
+        }
+    }
+
+    // 25.7) Создаем метод onResume и в нем вызываем метод для появления BottomNavigation
+    override fun onResume() {
+        super.onResume()
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)?.showBottomNavigationView()
+        }
     }
 
     // 17) Имплементируем метод для создания меню
