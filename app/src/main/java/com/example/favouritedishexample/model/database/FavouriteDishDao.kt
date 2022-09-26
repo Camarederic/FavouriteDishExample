@@ -23,4 +23,8 @@ interface FavouriteDishDao {
     // 29.1) Создаем метод для обновления
     @Update
     suspend fun updateFavouriteDishDetails(favouriteDish: FavouriteDish)
+
+    // 30.1) Создаем метод для получения любимых блюд
+    @Query("SELECT * FROM FAVOURITE_DISHES_TABLE WHERE favourite_dish = 1")
+    fun getFavouriteDishesList():Flow<List<FavouriteDish>>
 }
