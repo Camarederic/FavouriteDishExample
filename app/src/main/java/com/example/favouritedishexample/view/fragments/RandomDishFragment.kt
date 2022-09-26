@@ -1,5 +1,6 @@
 package com.example.favouritedishexample.view.fragments
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -36,6 +37,9 @@ class RandomDishFragment : Fragment() {
     // 44.1) Создаем viewModel
     private lateinit var mRandomDishViewModel: RandomDishViewModel
 
+    // 47.2) Создаем новую переменную
+    private var mProgressDialog: Dialog? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +49,20 @@ class RandomDishFragment : Fragment() {
         // 39.5) Инициализируем binding
         mBinding = FragmentRandomDishBinding.inflate(inflater, container, false)
         return mBinding!!.root
+    }
+    // 47.3) Создаем функцию для показа пользовательского диалогового окна прогресса
+    private fun showCustomProgressDialog(){
+        mProgressDialog = Dialog(requireActivity())
+        mProgressDialog?.let {
+            it.setContentView(R.layout.dialog_custom_progress)
+            it.show()
+        }
+    }
+    // 47.4) Создаем функцию для скрытия диалогового окна
+    private fun hideProgressDialog(){
+        mProgressDialog?.let {
+            it.dismiss()
+        }
     }
 
     // 44.2) Создаем метод onViewCreated
@@ -102,6 +120,13 @@ class RandomDishFragment : Fragment() {
             { loadRandomDish ->
                 loadRandomDish?.let {
                     Log.i("Random Dish Loading", "$loadRandomDish")
+
+                    // 47.5) Проверяем
+                    if (loadRandomDish && !mBinding!!.srlRandomDish.isRefreshing){
+                        showCustomProgressDialog()
+                    }else{
+                        hideProgressDialog()
+                    }
                 }
             }
         )
@@ -219,3 +244,4 @@ class RandomDishFragment : Fragment() {
 // 40.1) Дальше идем на сайт spoonacular.com/food-api и берем рецепты
 // 40.2) Идем в settings -> plugins и устанавливаем плагин JSON TO Kotlin Class
 // 40.3) Далее создаем в папке entities класс RandomDish
+// 47.1) Создаем новый layout dialog_custom_progress
