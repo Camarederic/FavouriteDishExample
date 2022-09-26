@@ -1,24 +1,35 @@
 package com.example.favouritedishexample.view.activities
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Camera
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ActivityAddUpdateDishBinding
 import com.example.favouritedishexample.databinding.DialogCustomImageSelectionBinding
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 
 // 10) Создаем активити
 class AddUpdateDishActivity : AppCompatActivity(),
@@ -26,8 +37,11 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
     private lateinit var mBinding: ActivityAddUpdateDishBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         mBinding = ActivityAddUpdateDishBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
@@ -81,18 +95,26 @@ class AddUpdateDishActivity : AppCompatActivity(),
             Dexter.withContext(this)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    //Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CAMERA)
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        // 8.4) Делаем проверку
-                        if (report!!.areAllPermissionsGranted()) {
-                            Toast.makeText(this@AddUpdateDishActivity,
-                                "You have camera permission now.", Toast.LENGTH_SHORT).show()
-                        } else {
-                            // 8.8) Вызываем метод
-                            showRationalDialogForPermissions()
+                        // 9.2) Добавляем функцию let и помещаем туда код
+                        report?.let {
+                            // 8.4) Делаем проверку
+                            if (report.areAllPermissionsGranted()) {
+                                // 9.3) Удаляем тоаст и создаем интент
+//                                Toast.makeText(this@AddUpdateDishActivity,
+//                                    "You have camera permission now.",
+//                                    Toast.LENGTH_SHORT).show()
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                startActivityForResult(intent, CAMERA)
+                            } else {
+                                // 8.8) Вызываем метод
+                                showRationalDialogForPermissions()
+                            }
                         }
+
                     }
 
                     override fun onPermissionRationaleShouldBeShown(
@@ -115,24 +137,43 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
             // 8.9) Применяем разрешения при помощи библиотеки Dexter для галереи
             Dexter.withContext(this)
-                .withPermissions(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                .withPermission(
+                    //Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        if (report!!.areAllPermissionsGranted())
-                            Toast.makeText(this@AddUpdateDishActivity,
-                                "You have the Gallery permission now to select image.",
+                // 9.1) Изменяем код
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                        Toast.makeText(this@AddUpdateDishActivity,
+                            "You have the Gallery permission now to select image",
+                            Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                        Toast.makeText(this@AddUpdateDishActivity,
+                            "You have denied the storage permission to select image",
                             Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?,
+                        p0: PermissionRequest?,
+                        p1: PermissionToken?,
                     ) {
                         showRationalDialogForPermissions()
                     }
+//                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+////                        if (report!!.areAllPermissionsGranted())
+////                            Toast.makeText(this@AddUpdateDishActivity,
+////                                "You have the Gallery permission now to select image.",
+////                            Toast.LENGTH_SHORT).show()
+//                    }
+
+//                    override fun onPermissionRationaleShouldBeShown(
+//                        permissions: MutableList<PermissionRequest>?,
+//                        token: PermissionToken?,
+//                    ) {
+//                        showRationalDialogForPermissions()
+//                    }
 
                 }).onSameThread().check()
 
@@ -143,6 +184,26 @@ class AddUpdateDishActivity : AppCompatActivity(),
         // 30) Показываем диалоговое окно
         dialog.show()
     }
+
+    // 9.5) Создаем метод
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK){
+            if (requestCode == CAMERA){
+                data?.extras?.let {
+                    val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
+                    mBinding.imageViewDish.setImageBitmap(thumbnail)
+
+                    // 9.6) Загружаем векторную картинку edit
+
+                    // 9.7) Изменяем иконку фотоаппарата с плюсиком на карандаш
+                    mBinding.imageViewAddDish.setImageDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.ic_vector_edit))
+                }
+            }
+        }
+    }
+
 
     // 8.6) Создаем метод для показа диалогового окна для разрешений
     private fun showRationalDialogForPermissions() {
@@ -161,6 +222,12 @@ class AddUpdateDishActivity : AppCompatActivity(),
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }.show()
+    }
+
+    // 9.4) Создаем константу для камеры
+    companion object {
+
+        private const val CAMERA = 1
     }
 }
 
