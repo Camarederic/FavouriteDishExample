@@ -95,6 +95,7 @@ class AllDishesFragment : Fragment() {
     // 22.1) Идем во fragment_all_dishes и изменяем
     // 22.2) Создаем item_dish_layout
     // 22.3) Создаем адаптер FavouriteDishAdapter
+    // 23.1) Переименовываем фрагменты
 
     // 17) Имплементируем метод для создания меню
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
