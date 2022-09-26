@@ -28,4 +28,8 @@ interface FavouriteDishDao {
     // 35.1) Создаем метод для удаления любимых блюд
     @Delete
     suspend fun deleteFavouriteDishDetails(favouriteDish: FavouriteDish)
+
+    // 38.1) Создаем метод для получения фильтрации списка блюд
+    @Query("SELECT * FROM FAVOURITE_DISHES_TABLE WHERE type = :filterType")
+    fun getFilteredDishesList(filterType: String): Flow<List<FavouriteDish>>
 }

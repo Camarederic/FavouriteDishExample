@@ -228,6 +228,21 @@ class AllDishesFragment : Fragment() {
             }
         }else{
             Log.i("Filter List", "Get Filter List")
+            // 38.4)
+            mFavouriteDishViewModel.getFilteredList(filterItemSelection).observe(viewLifecycleOwner){
+                dishes ->
+                dishes.let {
+                    if (it.isNotEmpty()) {
+                        mBinding.recyclerViewDishesList.visibility = View.VISIBLE
+                        mBinding.textViewNoDishesAddedYet.visibility = View.GONE
+
+                        mFavouriteDishAdapter.dishesList(it)
+                    }else{
+                        mBinding.recyclerViewDishesList.visibility = View.GONE
+                        mBinding.textViewNoDishesAddedYet.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 }
