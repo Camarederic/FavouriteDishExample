@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -58,6 +59,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
     // 12.3) Создаем переменную для пути картинки
     private var mImagePath: String = ""
 
+    // 14.1) Создаем переменную
+    private lateinit var mCustomListDialog: Dialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +82,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
         mBinding.editTextType.setOnClickListener(this)
         mBinding.editTextCategory.setOnClickListener(this)
         mBinding.editTextCookingTime.setOnClickListener(this)
+
+        // 14.9) Создаем клик слушателя для кнопки
+        mBinding.buttonAddDish.setOnClickListener(this)
     }
 
     // 24) Создаем метод для настройки тулбара для возврата назад
@@ -101,23 +108,79 @@ class AddUpdateDishActivity : AppCompatActivity(),
                     return
                 }
                 // 13.16) Добавляем id типа, категории и времени приготовления
-                R.id.editTextType ->{
+                R.id.editTextType -> {
                     customItemsListDialog(resources.getString(R.string.title_select_dish_type),
-                    Constants.dishTypes(),
-                    Constants.DISH_TYPE)
+                        Constants.dishTypes(),
+                        Constants.DISH_TYPE)
                     return
                 }
-                R.id.editTextCategory ->{
+                R.id.editTextCategory -> {
                     customItemsListDialog(resources.getString(R.string.title_select_dish_category),
-                    Constants.dishCategories(),
-                    Constants.DISH_CATEGORY)
+                        Constants.dishCategories(),
+                        Constants.DISH_CATEGORY)
                     return
                 }
-                R.id.editTextCookingTime ->{
+                R.id.editTextCookingTime -> {
                     customItemsListDialog(resources.getString(R.string.title_select_dish_cooking_time),
-                    Constants.dishCookTime(),
-                    Constants.DISH_COOKING_TIME)
+                        Constants.dishCookTime(),
+                        Constants.DISH_COOKING_TIME)
                     return
+                }
+                // 14.7) Создаем id для кнопки при нажатии на которую будут создаваться все пункты
+                R.id.button_add_dish -> {
+                    val title = mBinding.editTextTitle.text.toString().trim { it <= ' ' }
+                    val type = mBinding.editTextType.text.toString().trim { it <= ' ' }
+                    val category = mBinding.editTextCategory.text.toString().trim { it <= ' ' }
+                    val ingredients =
+                        mBinding.editTextIngredients.text.toString().trim { it <= ' ' }
+                    val cookingTimeInMinutes =
+                        mBinding.editTextCookingTime.toString().trim { it <= ' ' }
+                    val cookingDirection = mBinding.editTextDirection.toString().trim { it <= ' ' }
+
+                    // 14.8) Если путь картинки пустой, то создаем тоаст сообщение
+                    // и к остальным пунктам
+                    when {
+                        TextUtils.isEmpty(mImagePath) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_select_dish_image),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(title) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_enter_dish_title),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(type) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_select_dish_type),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(category) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_select_dish_category),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(ingredients) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_enter_dish_ingredients),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(cookingTimeInMinutes) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_select_dish_cooking_time),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        TextUtils.isEmpty(cookingDirection) -> {
+                            Toast.makeText(this,
+                                resources.getString(R.string.error_msg_enter_dish_cooking_instructions),
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(this, "All the entries are valid", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+
+                    }
                 }
             }
         }
@@ -174,6 +237,7 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
 
             dialog.dismiss()
+
         }
 
         binding.textViewGallery.setOnClickListener {
@@ -227,10 +291,47 @@ class AddUpdateDishActivity : AppCompatActivity(),
 
 
             dialog.dismiss()
+
         }
 
         // 30) Показываем диалоговое окно
         dialog.show()
+
+    }
+
+    // 13.13) Создаем метод для окна пользовательских элементов
+    private fun customItemsListDialog(title: String, itemList: List<String>, selection: String) {
+        mCustomListDialog = Dialog(this) // 14.2) Заменяем customListDialog на mCustomListDialog
+        val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
+
+        mCustomListDialog.setContentView(binding.root) // 14.3) Заменяем customListDialog на mCustomListDialog
+        binding.textViewTitle.text = title
+
+        binding.recyclerViewList.layoutManager = LinearLayoutManager(this)
+
+        // 13.14) Создаем адаптер
+        val adapter = CustomListItemAdapter(this, itemList, selection)
+        binding.recyclerViewList.adapter = adapter
+        mCustomListDialog.show() // 14.4) Заменяем customListDialog на mCustomListDialog
+    }
+
+
+    // 14.5) Создаем метод для выбора элемента списка
+    fun selectedListItem(item: String, selection: String) {
+        when (selection) {
+            Constants.DISH_TYPE -> {
+                mCustomListDialog.dismiss()
+                mBinding.editTextType.setText(item)
+            }
+            Constants.DISH_CATEGORY -> {
+                mCustomListDialog.dismiss()
+                mBinding.editTextCategory.setText(item)
+            }
+            else -> {
+                mCustomListDialog.dismiss()
+                mBinding.editTextCookingTime.setText(item)
+            }
+        }
     }
 
     // 9.5) Создаем метод
@@ -353,21 +454,6 @@ class AddUpdateDishActivity : AppCompatActivity(),
         return file.absolutePath
     }
 
-    // 13.13) Создаем метод для окна пользовательских элементов
-    private fun customItemsListDialog(title: String, itemList: List<String>, selection: String) {
-        val customListDialog = Dialog(this)
-        val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
-
-        customListDialog.setContentView(binding.root)
-        binding.textViewTitle.text = title
-
-        binding.recyclerViewList.layoutManager = LinearLayoutManager(this)
-
-        // 13.14) Создаем адаптер
-        val adapter = CustomListItemAdapter(this, itemList, selection)
-        binding.recyclerViewList.adapter = adapter
-        customListDialog.show()
-    }
 
     // 9.4) Создаем константу для камеры
     companion object {
