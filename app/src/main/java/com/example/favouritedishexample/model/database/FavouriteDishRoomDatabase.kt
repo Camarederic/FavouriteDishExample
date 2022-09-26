@@ -11,6 +11,9 @@ import kotlin.synchronized as synchronized1
 @Database(entities = [FavouriteDish::class], version = 1)
 abstract class FavouriteDishRoomDatabase : RoomDatabase() {
 
+    // 19.5) Создаем метод дао
+    abstract fun favouriteDishDao(): FavouriteDishDao
+
     // 17.2) Создаем метод
     companion object {
 
