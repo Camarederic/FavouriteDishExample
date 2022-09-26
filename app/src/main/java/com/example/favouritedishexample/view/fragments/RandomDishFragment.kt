@@ -57,6 +57,11 @@ class RandomDishFragment : Fragment() {
         // 44.9) Вызываем метод
         randomDishViewModelObserver()
 
+        // 46.3) Устнавливаем обновление слушателя
+        mBinding!!.srlRandomDish.setOnRefreshListener {
+            mRandomDishViewModel.getRandomRecipeFromAPI()
+        }
+
     }
 
     // 44.5) Создаем функцию
@@ -66,6 +71,12 @@ class RandomDishFragment : Fragment() {
             { randomDishResponse ->
                 randomDishResponse?.let {
                     Log.i("Random Dish Response", "$randomDishResponse.recipes[0]")
+
+                    // 46.9) Исчезновение обновления
+                    if (mBinding!!.srlRandomDish.isRefreshing){
+                        mBinding!!.srlRandomDish.isRefreshing = false
+                    }
+
                     // 45.6) Вызываем метод
                     setRandomDishResponseInUI(randomDishResponse.recipes[0])
                     // 45.7) Далее идем в activity_main.xml и добавляем
@@ -78,6 +89,11 @@ class RandomDishFragment : Fragment() {
             { dataError ->
                 dataError?.let {
                     Log.e("Random Dish API Error", "$dataError")
+
+                    // 46.10) Исчезновение обновления
+                    if (mBinding!!.srlRandomDish.isRefreshing){
+                        mBinding!!.srlRandomDish.isRefreshing = false
+                    }
                 }
             }
         )
@@ -124,10 +140,20 @@ class RandomDishFragment : Fragment() {
             mBinding!!.textViewCookingDirection.text = Html.fromHtml(
                 recipe.instructions,
                 Html.FROM_HTML_MODE_COMPACT)
-        }else{
+        } else {
             @Suppress("DEPRECATION")
             mBinding!!.textViewCookingDirection.text = Html.fromHtml(recipe.instructions)
         }
+
+        // 46.4) Устнавливаем unselected сердечко
+        mBinding!!.imageViewFavouriteDish.setImageDrawable(
+            ContextCompat.getDrawable(requireActivity(),
+                R.drawable.ic_favourite_unselected)
+        )
+
+        // 46.5)
+        var addedToFavourites = false
+
         mBinding!!.textViewCookingTime.text =
             resources.getString(
                 R.string.label_estimate_cooking_time,
@@ -136,34 +162,50 @@ class RandomDishFragment : Fragment() {
 
         // 45.11) Устнавливаем клик слушателя на сердечко
         mBinding!!.imageViewFavouriteDish.setOnClickListener {
-            val randomDishDetails = FavouriteDish(
-                recipe.image,
-                Constants.DISH_IMAGE_SOURCE_ONLINE,
-                recipe.title,
-                dishType,
-                "Other",
-                ingredients,
-                recipe.readyInMinutes.toString(),
-                recipe.instructions,
-                true
-            )
-            // 45.12) Создаем viewModel
-            val mFavouriteDishViewModel:FavouriteDishViewModel by viewModels {
-                FavouriteDishViewModelFactory((requireActivity().application as FavouriteDishApplication).repository)
-            }
-            mFavouriteDishViewModel.insert(randomDishDetails)
 
-            // 45.13) Устнавливаем красное сердечко
-            mBinding!!.imageViewFavouriteDish.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireActivity(),
-                    R.drawable.ic_favourite_selected
+            // 46.7) Проверяем
+            if (addedToFavourites) {
+                Toast.makeText(requireActivity(),
+                    resources.getString(R.string.message_already_added_to_favourites),
+                    Toast.LENGTH_SHORT).show()
+                // 46.8) Переносим код в else
+            } else {
+                val randomDishDetails = FavouriteDish(
+                    recipe.image,
+                    Constants.DISH_IMAGE_SOURCE_ONLINE,
+                    recipe.title,
+                    dishType,
+                    "Other",
+                    ingredients,
+                    recipe.readyInMinutes.toString(),
+                    recipe.instructions,
+                    true
                 )
-            )
-            Toast.makeText(requireActivity(),resources.getString(R.string.message_added_to_favourites),
-            Toast.LENGTH_SHORT).show()
+                // 45.12) Создаем viewModel
+                val mFavouriteDishViewModel: FavouriteDishViewModel by viewModels {
+                    FavouriteDishViewModelFactory((requireActivity().application as FavouriteDishApplication).repository)
+                }
+                mFavouriteDishViewModel.insert(randomDishDetails)
+
+                // 46.6)
+                addedToFavourites = true
+
+                // 45.13) Устнавливаем красное сердечко
+                mBinding!!.imageViewFavouriteDish.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.ic_favourite_selected
+                    )
+                )
+                Toast.makeText(requireActivity(),
+                    resources.getString(R.string.message_added_to_favourites),
+                    Toast.LENGTH_SHORT).show()
+            }
         }
 
+
+        // 46.1) Идем в fragment_random_dish и добавляем
+        // 46.2) Идем в string и добавляем новый message
 
     }
 
