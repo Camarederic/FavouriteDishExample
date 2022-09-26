@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.application.FavouriteDishApplication
 import com.example.favouritedishexample.databinding.FragmentAllDishesBinding
+import com.example.favouritedishexample.model.entities.FavouriteDish
 import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
 import com.example.favouritedishexample.view.activities.MainActivity
 import com.example.favouritedishexample.view.adapters.FavouriteDishAdapter
@@ -98,11 +99,14 @@ class AllDishesFragment : Fragment() {
     // 22.2) Создаем item_dish_layout
     // 22.3) Создаем адаптер FavouriteDishAdapter
     // 23.1) Переименовываем фрагменты
+    // 26.1) Вставляем в gradle новый плагин
+    // 26.3) Далее идем в mobile_navigation.xml и во фрагменте navigation_dish_details добавляем аргумент
 
     // 24.3) Создаем метод для деталей еды
-    fun dishDetails(){
+    fun dishDetails(favouriteDish: FavouriteDish){ // 26.5) Добавляем аргумент
         // 24.4) Устанавливаем навигацию из фрагмента AllDishes во фрагмент DishDetails
-        findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails())
+        findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails(
+            favouriteDish)) // 26.4) Добавляем
 
         // 25.6) Делаем проверку и прячем BottomNavigation
         if (requireActivity() is MainActivity){
