@@ -11,6 +11,9 @@ object Constants {
     const val DISH_IMAGE_SOURCE_LOCAL : String = "Local"
     const val DISH_IMAGE_SOURCE_ONLINE : String = "Online"
 
+    // 34.1) Создаем константу
+    const val EXTRA_DISH_DETAILS: String = "DishDetails"
+
     // 13.4) Создаем метод для типов еды
     fun dishTypes(): ArrayList<String> {
         val list = ArrayList<String>()

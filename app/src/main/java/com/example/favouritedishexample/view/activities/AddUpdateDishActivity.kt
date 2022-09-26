@@ -65,6 +65,9 @@ class AddUpdateDishActivity : AppCompatActivity(),
     // 14.1) Создаем переменную
     private lateinit var mCustomListDialog: Dialog
 
+    // 34.3) Создаем переменную
+    private var mFavouriteDishDetails: FavouriteDish? = null
+
     // 20.1) Создаем viewModel
     private val mFavouriteDishViewModel: FavouriteDishViewModel by viewModels {
         FavouriteDishViewModelFactory((application as FavouriteDishApplication).repository)
@@ -78,8 +81,31 @@ class AddUpdateDishActivity : AppCompatActivity(),
         mBinding = ActivityAddUpdateDishBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
+        // 34.4) Создаем проверку
+        if (intent.hasExtra(Constants.EXTRA_DISH_DETAILS)) {
+            mFavouriteDishDetails = intent.getParcelableExtra(Constants.EXTRA_DISH_DETAILS)
+        }
+
         // 25) Вызываем метод
         setupActionBar()
+
+        // 34.6) Обновляем картинку и все компоненты
+        mFavouriteDishDetails?.let {
+            if (it.id != 0){
+                mImagePath = it.image
+                Glide.with(this@AddUpdateDishActivity)
+                    .load(mImagePath)
+                    .centerCrop()
+                    .into(mBinding.imageViewDish)
+                mBinding.editTextTitle.setText(it.title)
+                mBinding.editTextType.setText(it.type)
+                mBinding.editTextCategory.setText(it.category)
+                mBinding.editTextIngredients.setText(it.ingredients)
+                mBinding.editTextCookingTime.setText(it.cookingTime)
+                mBinding.editTextDirection.setText(it.directionToCook)
+                mBinding.buttonAddDish.text = resources.getString(R.string.label_update_dish)
+            }
+        }
 
         // 26) Создаем layout под названием dialog_custom_image_selection для камеры и фото
 
@@ -98,6 +124,18 @@ class AddUpdateDishActivity : AppCompatActivity(),
     // 24) Создаем метод для настройки тулбара для возврата назад
     private fun setupActionBar() {
         setSupportActionBar(mBinding.toolbarAddDishActivity)
+
+        // 34.5) Проверяем на null
+        if (mFavouriteDishDetails != null && mFavouriteDishDetails!!.id != 0){
+            supportActionBar?.let {
+                it.title = resources.getString(R.string.title_edit_dish)
+            }
+        }else{
+            supportActionBar?.let {
+                it.title = resources.getString(R.string.title_add_dish)
+            }
+        }
+        // 24)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         mBinding.toolbarAddDishActivity.setNavigationOnClickListener {
             onBackPressed()
@@ -184,27 +222,65 @@ class AddUpdateDishActivity : AppCompatActivity(),
                                 Toast.LENGTH_SHORT).show()
                         }
                         else -> {
+
+                            // 34.7)
+                            var dishId = 0
+                            var imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL
+                            var favouriteDish = false
+                            mFavouriteDishDetails?.let {
+                                if (it.id != 0){
+                                    dishId = it.id
+                                    imageSource = it.imageSource
+                                    favouriteDish = it.favouriteDish
+                                }
+                            }
+
+
                             // 20.3) Удаляем тоаст сообщение и записываем вместо него другой код
                             // Toast.makeText(this, "All the entries are valid", Toast.LENGTH_SHORT)
                             // .show()
                             val favouriteDishDetails: FavouriteDish = FavouriteDish(
                                 mImagePath,
-                                Constants.DISH_IMAGE_SOURCE_LOCAL,
+
+                                // Constants.DISH_IMAGE_SOURCE_LOCAL, 34.10) Заменяем на imageSource
+                                imageSource,
                                 title,
                                 type,
                                 category,
                                 ingredients,
                                 cookingTimeInMinutes,
                                 cookingDirection,
-                                false
+                                //false // 34.11) Удаляем false и добавляем favouriteDish и dishId
+                            favouriteDish,
+                                dishId
                             )
-                            // 20.4) Вставляем во viewModel детали
-                            mFavouriteDishViewModel.insert(favouriteDishDetails)
-                            // 20.5) Пишем другое тоаст сообщение
-                            Toast.makeText(this@AddUpdateDishActivity,
-                            "You successfully added your favourite dish details",
-                            Toast.LENGTH_SHORT).show()
-                            Log.i("Insertion", "Success")
+
+                            // 34.8)
+                            if (dishId == 0){
+                                // 34.9) Переносим этот код сюда
+                                mFavouriteDishViewModel.insert(favouriteDishDetails)
+                                // 20.5) Пишем другое тоаст сообщение
+                                Toast.makeText(this@AddUpdateDishActivity,
+                                    "You successfully added your favourite dish details.",
+                                    Toast.LENGTH_SHORT).show()
+                                Log.i("Insertion", "Success")
+
+                                // 34.12)
+                            }else{
+                                mFavouriteDishViewModel.update(favouriteDishDetails)
+                                Toast.makeText(this@AddUpdateDishActivity,
+                                "You successfully updated your favourite dish details.",
+                                Toast.LENGTH_SHORT).show()
+                                Log.e("Updating", "Success")
+                            }
+                              // Переносим этот код выше
+//                            // 20.4) Вставляем во viewModel детали
+//                            mFavouriteDishViewModel.insert(favouriteDishDetails)
+//                            // 20.5) Пишем другое тоаст сообщение
+//                            Toast.makeText(this@AddUpdateDishActivity,
+//                                "You successfully added your favourite dish details",
+//                                Toast.LENGTH_SHORT).show()
+//                            Log.i("Insertion", "Success")
                             finish()
                         }
 

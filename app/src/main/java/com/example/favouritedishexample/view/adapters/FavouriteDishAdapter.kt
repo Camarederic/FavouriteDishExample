@@ -1,6 +1,7 @@
 package com.example.favouritedishexample.view.adapters
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.example.favouritedishexample.R
 import com.example.favouritedishexample.databinding.ItemDishLayoutBinding
 import com.example.favouritedishexample.model.entities.FavouriteDish
+import com.example.favouritedishexample.utils.Constants
+import com.example.favouritedishexample.view.activities.AddUpdateDishActivity
 import com.example.favouritedishexample.view.fragments.AllDishesFragment
 import com.example.favouritedishexample.view.fragments.FavouriteDishesFragment
 
@@ -26,6 +29,7 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
     class ViewHolder(view: ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
         val imageViewDishImage = view.imageViewDishImage
         val textViewDishTitle = view.textViewDishTitle
+
         // 33.4) Добавляем для imageButton
         val imageButtonMore = view.imageButtonMore
     }
@@ -52,7 +56,7 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
                 fragment.dishDetails(dish) // 26.6) Добавляем dish
             }
             // 32.4) Добавляем проверку
-            if (fragment is FavouriteDishesFragment){
+            if (fragment is FavouriteDishesFragment) {
                 fragment.dishDetails(dish)
             }
         }
@@ -65,9 +69,15 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
 
             // 33.7) Создаем клик слушателя для EDIT DISH и DELETE DISH
             popup.setOnMenuItemClickListener {
-                if (it.itemId == R.id.action_edit_dish){
+                if (it.itemId == R.id.action_edit_dish) {
                     Log.i("You have clicked on", "Edit Option of ${dish.title}")
-                }else if (it.itemId == R.id.action_delete_dish){
+                    // 34.2) Создаем интент для перехода из фрагмента в активность обновления еды
+                    val intent =
+                        Intent(fragment.requireActivity(), AddUpdateDishActivity::class.java)
+                    intent.putExtra(Constants.EXTRA_DISH_DETAILS, dish)
+                    fragment.requireActivity().startActivity(intent)
+
+                } else if (it.itemId == R.id.action_delete_dish) {
                     Log.i("You have clicked on", "Delete Option of ${dish.title}")
                 }
                 true
@@ -75,9 +85,9 @@ class FavouriteDishAdapter(private val fragment: Fragment) :
             popup.show()
         }
         // 33.8) Устанавливаем видимость и исчезновение popupMenu для разных фрагментов
-        if (fragment is AllDishesFragment){
+        if (fragment is AllDishesFragment) {
             holder.imageButtonMore.visibility = View.VISIBLE
-        }else if (fragment is FavouriteDishesFragment){
+        } else if (fragment is FavouriteDishesFragment) {
             holder.imageButtonMore.visibility = View.GONE
         }
     }
