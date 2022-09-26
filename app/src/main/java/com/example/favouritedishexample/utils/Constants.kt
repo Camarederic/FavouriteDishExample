@@ -18,6 +18,14 @@ object Constants {
     const val ALL_ITEMS: String = "All"
     const val FILTER_SELECTION: String = "FilterSelection"
 
+    // 41.1) Создаем константу
+    const val API_ENDPOINT: String = "recipes/random"
+    // 41.4) Создаем константы для параметров из сайта для рецептов
+    const val API_KEY: String = "apiKey"
+    const val LIMIT_LICENSE: String = "limitLicense"
+    const val TAGS: String = "tags"
+    const val NUMBER: String = "number"
+
     // 13.4) Создаем метод для типов еды
     fun dishTypes(): ArrayList<String> {
         val list = ArrayList<String>()
