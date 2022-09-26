@@ -73,5 +73,8 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.3"
     kapt "androidx.room:room-compiler:2.4.3"
 
+    // Palette
+    implementation "androidx.palette:palette-ktx:1.0.0"
+
 
 }
